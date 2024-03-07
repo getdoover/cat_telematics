@@ -1,0 +1,80 @@
+{
+    "deployment_package_dir": "processor/",
+    "processor_deployments" : {
+        "processors" : [
+            {
+                "name" : "message_processor",
+                "processor_package_dir" : "processor/"
+            }
+        ],
+        "tasks" : [
+            {
+                "name" : "fetch_uplink",
+                "processor_name" : "message_processor",
+                "task_config" : {
+                    "message_type": "FETCH"
+                },
+                "min_time_between_invocations" : 10
+            },
+            {
+                "name" : "on_uplink",
+                "processor_name" : "message_processor",
+                "task_config" : {
+                    "message_type": "UPLINK"
+                },
+                "subscriptions" : [
+                    {
+                        "channel_name" : "tts_uplink_recv",
+                        "is_active" : true
+                    }
+                ]
+            },
+            {
+                "name" : "on_downlink",
+                "processor_name" : "message_processor",
+                "task_config" : {
+                    "message_type": "DOWNLINK"
+                },
+                "subscriptions" : [
+                    {
+                        "channel_name" : "ui_cmds",
+                        "is_active" : true
+                    }
+                ]
+            },
+            {
+                "name" : "on_deploy",
+                "processor_name" : "message_processor",
+                "task_config" : {
+                    "message_type": "DEPLOY"
+                },
+                "subscriptions" : [
+                    {
+                        "channel_name" : "deployments",
+                        "is_active" : true
+                    }
+                ]
+            }
+        ]
+    },
+    "deployment_channel_messages" : [
+        {
+            "channel_name" : "ui_cmds",
+            "channel_message" : {
+                "cmds" : {}
+            }
+        },
+        {
+            "channel_name" : "ui_state",
+            "channel_message" : {
+                "state" : null
+            }
+        },
+        {
+            "channel_name" : "deployments",
+            "channel_message" : {
+                "new_deployment" : true
+            }
+        }
+    ]
+}
