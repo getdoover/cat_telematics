@@ -184,6 +184,7 @@ class target:
             if 'cat_api_key' in deployment_config and 'cat_api_secret' in deployment_config:
                 self.cat_key_id = deployment_config['cat_api_id']
                 self.cat_key_secret = deployment_config['cat_api_secret']
+                self.add_to_log("cat keys retrieved" + str(self.cat_key_id) + " " + str(self.cat_key_secret))
                 return True
         return False
     
@@ -195,7 +196,7 @@ class target:
                 self.machine_model = deployment_config['machine_model']
                 self.machine_make = deployment_config['machine_make']
                 self.add_to_log("machine details retrieved" + str(self.machine_serial_number) + " " + str(self.machine_model) + " " + str(self.machine_make))
-                
+                return True
         return False
             
     def add_to_log(self, msg):
