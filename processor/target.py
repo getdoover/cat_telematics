@@ -246,27 +246,26 @@ class target:
             self.add_to_log("odometer is: " + str(odometer))
         except Exception as e:
             self.add_to_log("ERROR could not retrieve odometer from uplink aggregate " + str(e))
-        
-        self.add_to_log("uplink aggregate " + str(uplink_aggregate))
 
         self.ui_state_channel.publish(
             msg_str=json.dumps({
                 "state" : {
                     "children" : {
                         "engineOn" : {
-                            "value" : engine_on
+                            "currentValue" : engine_on
                         },
                         "deviceRunHours" : {
-                            "value" : engine_hours
+                            "currentValue" : engine_hours
                         },
                         "deviceOdometer" : {
-                            "value" : odometer
+                            "currentValue" : odometer
                         },
                     }
                 }
             }),
             save_log=True
         )
+
         # self.compute_output_levels(ui_cmds_channel, ui_state_channel)
         # self.update_reported_signal_strengths(ui_cmds_channel, ui_state_channel)
 
