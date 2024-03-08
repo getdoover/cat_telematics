@@ -293,7 +293,7 @@ class target:
             return False
         self.add_to_log("make, model, serial are: " + str(make) + " " + str(model) + " " + str(serial))
         self.add_to_log("machine details are: " + str(self.machine_make) + " " + str(self.machine_model) + " " + str(self.machine_serial_number))
-        if make is not self.machine_make or model is not self.machine_model or serial is not self.machine_serial_number:
+        if str(make) is not str(self.machine_make) or str(model) is not str(self.machine_model) or str(serial) is not str(self.machine_serial_number):
             self.add_to_log("ERROR machine details do not match uplink aggregate")
             return False
         return True
