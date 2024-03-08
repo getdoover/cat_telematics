@@ -87,9 +87,6 @@ class target:
 
             if message_type == "DEPLOY":
                 self.deploy()
-                self.add_to_log("fetching...")
-                self.fetch()
-
 
             if message_type == "DOWNLINK":
                 self.downlink()
