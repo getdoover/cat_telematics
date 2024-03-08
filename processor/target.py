@@ -146,7 +146,7 @@ class target:
 
     def uplink(self):
         ## Run any uplink processing code here
-        
+        self.add_to_log("uplink processing")
         ## Get the deployment channel
         ui_state_channel = self.cli.get_channel(
             channel_name="ui_state",
@@ -159,23 +159,23 @@ class target:
             agent_id=self.kwargs['agent_id']
         )
 
-        self.compute_output_levels(ui_cmds_channel, ui_state_channel)
-        self.update_reported_signal_strengths(ui_cmds_channel, ui_state_channel)
+        # self.compute_output_levels(ui_cmds_channel, ui_state_channel)
+        # self.update_reported_signal_strengths(ui_cmds_channel, ui_state_channel)
 
-        ui_state_channel.update() ## Update the details stored in the state channel so that warnings are computed from current values
-        self.assess_warnings(ui_cmds_channel, ui_state_channel)
+        # ui_state_channel.update() ## Update the details stored in the state channel so that warnings are computed from current values
+        # self.assess_warnings(ui_cmds_channel, ui_state_channel)
 
 
     def downlink(self):
         ## Run any downlink processing code here
-        
-        self.send_uplink_interval_if_required()
-        self.send_burst_mode_if_required()
+        self.add_to_log("downlink processing")
+        # self.send_uplink_interval_if_required()
+        # self.send_burst_mode_if_required()
 
     def fetch(self):
         ## Run any fetch processing code here
         # 
-        self.add_to_log("fetching data")
+        self.add_to_log("fetching data from the fetch channel")
         try:
             success = self.get_cat_keys()
             self.add_to_log("cat keys retrieved")
