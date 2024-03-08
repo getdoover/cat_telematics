@@ -171,13 +171,16 @@ class target:
     def fetch(self):
         ## Run any fetch processing code here
         # 
+        self.add_to_log("fetching data")
         try:
             success = self.get_cat_keys()
+            self.add_to_log("cat keys retrieved")
         except Exception as e:
             self.add_to_log("ERROR could not retrieve cat API keys from deployment config " + str(e))
         
         try:
             success = self.get_machine_details() and success
+            self.add_to_log("machine details retrieved")
         except Exception as e:  
             self.add_to_log("ERROR could not retrieve machine serial number from deployment config " + str(e)) 
         
@@ -186,9 +189,11 @@ class target:
                 key_id = self.cat_key_id,
                 key_secret = self.cat_key_secret,
             )
+            self.add_to_log("cat api interface created")
 
             try:
                 msg = self.cat_api_iface.get_equipment_overview(self.machine_make, self.machine_model, self.machine_serial_number)
+                self.add_to_log("cat api response recieved")           
             except Exception as e:
                 self.add_to_log("ERROR could not retrieve equipment overview from cat API " + str(e))
 
