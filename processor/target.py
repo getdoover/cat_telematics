@@ -347,7 +347,7 @@ class target:
             self.add_to_log("cat api response " + str(msg))
             if msg is not None:
                 self.uplink_recv_channel.publish(
-                    msg_str=str(msg["Equipment"][0])
+                    msg_str=msg["Equipment"][0]
                 )
 
     def get_cat_keys(self):
