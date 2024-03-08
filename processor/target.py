@@ -194,7 +194,7 @@ class target:
         
         ## Get the deployment channel
         got_machine_details = self.get_machine_details()
-        check_uplink = self.check_uplink()
+        check_uplink = self.check_uplink(uplink_aggregate)
 
         ##run checks for both the deployment config and that the uplink is for the correct device
         if got_machine_details is False or check_uplink is False:
