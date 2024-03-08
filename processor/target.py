@@ -280,7 +280,7 @@ class target:
         
         try:
             uplink_aggregate1 = json.loads(uplink_aggregate)
-            equipment_header = uplink_aggregate1['EquipmentHeader']
+            equipment_header = uplink_aggregate1["EquipmentHeader"]
         except Exception as e:
             self.add_to_log("ERROR no equipment header in uplink aggregate " + str(e))
             return False
