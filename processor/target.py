@@ -191,7 +191,7 @@ class target:
         self.add_to_log("processing uplink ")
         uplink_aggregate = self.uplink_recv_channel.get_aggregate()
         self.add_to_log("uplink aggregate type is: " + str(type(uplink_aggregate)))
-        self.add_to_log("uplink aggregate type is: " + str(type(json.loads(uplink_aggregate))))
+        
         ## Get the deployment channel
         got_machine_details = self.get_machine_details()
         check_uplink = self.check_uplink(uplink_aggregate)
