@@ -163,8 +163,8 @@ class target:
         
         if success:
             self.cat_api_iface = cat_api_iface(
-                key_id=self.kwargs['access_token'],
-                key_secret=self.kwargs['api_endpoint'],
+                key_id = self.cat_key_id,
+                key_secret = self.cat_key_secret,
             )
 
             try:
@@ -203,3 +203,10 @@ class target:
         if not hasattr(self, '_log'):
             self._log = ""
         self._log = self._log + str(msg) + "\n"
+
+    def create_doover_client(self):
+        self.cli = pd.doover_iface(
+            agent_id=self.kwargs['agent_id'],
+            access_token=self.kwargs['access_token'],
+            endpoint=self.kwargs['api_endpoint'],
+        )
