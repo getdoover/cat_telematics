@@ -302,7 +302,7 @@ class target:
         except Exception as e:
             self.add_to_log("ERROR could not retrieve make, model, serial from uplink aggregate " + str(e))
             return False
-        
+        self.add_to_log("make, model, serial are: " + str(make) + " " + str(model) + " " + str(serial))
         if make is not self.machine_make or model is not self.machine_model or serial is not self.machine_serial_number:
             self.add_to_log("ERROR machine details do not match uplink aggregate")
             return False
