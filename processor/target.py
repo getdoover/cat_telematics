@@ -234,7 +234,7 @@ class target:
         ## Get the engine hours from the uplink aggregate
         engine_hours = None
         try:
-            engine_hours = uplink_aggregate["CumulativeOperatingHours"]["Value"]
+            engine_hours = uplink_aggregate["CumulativeOperatingHours"]["Hour"]
             self.add_to_log("engine hours are: " + str(engine_hours))
         except Exception as e:
             self.add_to_log("ERROR could not retrieve engine hours from uplink aggregate " + str(e))
