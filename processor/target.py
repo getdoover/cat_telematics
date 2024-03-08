@@ -204,7 +204,7 @@ class target:
         ## Get the location from the uplink aggregate
         location = None
         try:
-            location = uplink_aggregate["location"]
+            location = uplink_aggregate["Location"]
             self.add_to_log("location is: " + str(location)) 
             long = float(location["Longitude"])
             lat = float(location["Latitude"])
@@ -213,7 +213,7 @@ class target:
             self.add_to_log("ERROR could not retrieve location from uplink aggregate " + str(e))
         
         position = None
-        if long is not None and lat is not None and alt is not None:
+        if long is not None and lat is not None and alt is not None and location is not None:
             position = {
                             'lat': lat,
                             'long': long,
