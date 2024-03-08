@@ -169,6 +169,95 @@ class target:
                         "displayString" : "Machine Odometer (km)",
                         "decPrecision": 1,
                     },
+                    "maintenance_submodule": {
+                        "type": "uiSubmodule",
+                        "name": "maintenance_submodule",
+                        "displayString": "Maintenance",
+                        "children": {
+                            "lastServiceDate" : {
+                                "type" : "uiDatetimeParam",
+                                "includeTime" : False,
+                                "name" : "lastServiceDate",
+                                "displayString" : "Last service done",
+                            },
+                            "lastServiceHours" : {
+                                "type" : "uiFloatParam",
+                                "min" : 0,
+                                "name" : "lastServiceHours",
+                                "displayString" : "At hours (hrs)",
+                            },
+                            "lastServiceOdo" : {
+                                "type" : "uiFloatParam",
+                                "min" : 0,
+                                "name" : "lastServiceOdo",
+                                "displayString" : "And at Odometer (kms)",
+                            },
+                            "serviceIntervalMonths" : {
+                                "type" : "uiFloatParam",
+                                "min" : 0,
+                                "max" : 60,
+                                "name" : "serviceIntervalMonths",
+                                "displayString" : "Service Interval (months)",
+                            },
+                            "serviceIntervalHours" : {
+                                "type" : "uiFloatParam",
+                                "min" : 0,
+                                "name" : "serviceIntervalHours",
+                                "displayString" : "Service Interval (hrs)",
+                            },
+                            "serviceIntervalOdo" : {
+                                "type" : "uiFloatParam",
+                                "min" : 0,
+                                "name" : "serviceIntervalOdo",
+                                "displayString" : "Service Interval (kms)",
+                            },
+                            "nextServiceDue" : {
+                                "type" : "uiVariable",
+                                "varType" : "text",
+                                "name" : "nextServiceDue",
+                                "displayString" : "Next Service due (max)",
+                            },
+                            "nextServiceHours" : {
+                                "type" : "uiVariable",
+                                "varType" : "float",
+                                "name" : "nextServiceHours",
+                                "displayString" : "At hours (hrs)",
+                            },
+                            "nextServiceOdo" : {
+                                "type" : "uiVariable",
+                                "varType" : "float",
+                                "name" : "nextServiceOdo",
+                                "displayString" : "And at Odometer (kms)",
+                            }
+                        }
+                    },
+                    "config_submodule": {
+                        "type": "uiSubmodule",
+                        "name": "config_submodule",
+                        "displayString": "Config",
+                        "children": {
+                            "setHours" : {
+                                "type" : "uiFloatParam",
+                                "name" : "setHours",
+                                "displayString" : "Set Machine Hours (hrs)",
+                            },
+                            "setKms" : {
+                                "type" : "uiFloatParam",
+                                "name" : "setKms",
+                                "displayString" : "Set Odometer (km)",
+                            },
+                            "warningSmsPeriod" : {
+                                "type" : "uiFloatParam",
+                                "name" : "warningSmsPeriod",
+                                "displayString" : "SMS Alert Period (days)",
+                            },
+                            "aveCalcDays" : {
+                                "type" : "uiFloatParam",
+                                "name" : "aveCalcDays",
+                                "displayString" : "Ave Use Calculation (days)",
+                            }
+                        }
+                    },
                     "node_connection_info": {
                         "type": "uiConnectionInfo",
                         "name": "node_connection_info",
