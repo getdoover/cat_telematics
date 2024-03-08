@@ -278,23 +278,11 @@ class target:
             self.add_to_log("ERROR no uplink aggregate")
             return False
         
-        # try:
-        # uplink_aggregate1 = json.loads(uplink_aggregate)
-        equipment_header = uplink_aggregate["EquipmentHeader"]
-        self.add_to_log("equipment header is: " + str(equipment_header))
-        self.add_to_log("uplink aggregate is: " + str(uplink_aggregate))
-        self.add_to_log("uplink aggregate type is: " + str(type(uplink_aggregate)))
-        self.add_to_log("uplink json dumps aggregate keys are: " + json.dumps(uplink_aggregate))
-
-
-        # self.add_to_log("uplink aggregate1 is: " + str(uplink_aggregate1))
-        # self.add_to_log("uplink aggregate1 type is: " + str(type(uplink_aggregate1)))
-        # self.add_to_log("uplink aggregate1 keys are: " + str(uplink_aggregate1.keys()))
-        # self.add_to_log("uplink aggregate1 values are: " + str(uplink_aggregate1.values()))
-        
-        # except Exception as e:
-        #     self.add_to_log("ERROR no equipment header in uplink aggregate " + str(e))
-        #     return False
+        try:
+            equipment_header = uplink_aggregate["EquipmentHeader"]
+        except Exception as e:
+            self.add_to_log("ERROR no equipment header in uplink aggregate " + str(e))
+            return False
 
         try:
             make = equipment_header["OEMName"]
@@ -304,6 +292,7 @@ class target:
             self.add_to_log("ERROR could not retrieve make, model, serial from uplink aggregate " + str(e))
             return False
         self.add_to_log("make, model, serial are: " + str(make) + " " + str(model) + " " + str(serial))
+        self.add_to_log("machine details are: " + str(self.machine_make) + " " + str(self.machine_model) + " " + str(self.machine_serial_number))
         if make is not self.machine_make or model is not self.machine_model or serial is not self.machine_serial_number:
             self.add_to_log("ERROR machine details do not match uplink aggregate")
             return False
