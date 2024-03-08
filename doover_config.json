@@ -14,7 +14,7 @@
                 "task_config" : {
                     "message_type": "FETCH"
                 },
-                "min_time_between_invocations" : 10
+                "min_time_between_invocations" : 60
             },
             {
                 "name" : "on_uplink",
