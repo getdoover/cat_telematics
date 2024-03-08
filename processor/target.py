@@ -24,7 +24,15 @@ try: del pd
 except: pass
 
 import pydoover as pd
-from cat_api_iface import cat_api_iface
+
+if 'cat_api_iface_file' in sys.modules:
+    del sys.modules['cat_api_iface_file']
+try: del cat_api_iface
+except: pass
+try: del cat_api_iface_file
+except: pass
+
+from cat_api_iface_file import cat_api_iface
 
 
 class target:
@@ -55,13 +63,23 @@ class target:
             channel_name='uplink_recv',
         )
 
-        self.add_to_log( "running : " + str(os.getcwd()) + " " + str(__file__) )
+        self.notifications_channel = pd.channel(
+            api_client=self.cli.api_client,
+            agent_id=self.kwargs['agent_id'],
+            channel_name='significantEvent',
+        )
 
+        self.activity_log_channel = pd.channel(
+            api_client=self.cli.api_client,
+            agent_id=self.kwargs['agent_id'],
+            channel_name='activity_logs',
+        )
+
+        self.add_to_log( "running : " + str(os.getcwd()) + " " + str(__file__) )
         self.add_to_log( "kwargs = " + str(self.kwargs) )
         self.add_to_log( str( start_time ) )
 
         try:
-            
             ## Do any processing you would like to do here
             message_type = None
             if 'message_type' in self.kwargs['package_config'] and 'message_type' is not None:
@@ -174,6 +192,7 @@ class target:
             except Exception as e:
                 self.add_to_log("ERROR could not retrieve equipment overview from cat API " + str(e))
 
+            self.add_to_log("cat api response " + str(msg))
             if msg is not None:
                 self.uplink_recv_channel.publish(
                     msg_str=msg
