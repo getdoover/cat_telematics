@@ -75,6 +75,11 @@
             "channel_message" : {
                 "new_deployment" : true
             }
+        },
+        {
+            "channel_name" : "uplink_recv",
+            "channel_message" : {
+            }
         }
     ]
 }

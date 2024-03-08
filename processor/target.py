@@ -24,6 +24,7 @@ try: del pd
 except: pass
 
 import pydoover as pd
+from cat_api_iface import cat_api_iface
 
 
 class target:
@@ -47,6 +48,12 @@ class target:
         start_time = time.time()
 
         self.create_doover_client()
+
+        self.uplink_recv_channel = pd.channel(
+            api_client=self.cli.api_client,
+            agent_id=self.kwargs['agent_id'],
+            channel_name='uplink_recv',
+        )
 
         self.add_to_log( "running : " + str(os.getcwd()) + " " + str(__file__) )
 
@@ -140,3 +147,57 @@ class target:
         
         self.send_uplink_interval_if_required()
         self.send_burst_mode_if_required()
+
+    def fetch(self):
+        ## Run any fetch processing code here
+        # 
+        try:
+            success = self.get_cat_keys()
+        except Exception as e:
+            self.add_to_log("ERROR could not retrieve cat API keys from deployment config " + str(e))
+        
+        try:
+            success = self.get_machine_details() and success
+        except Exception as e:  
+            self.add_to_log("ERROR could not retrieve machine serial number from deployment config " + str(e)) 
+        
+        if success:
+            self.cat_api_iface = cat_api_iface(
+                key_id=self.kwargs['access_token'],
+                key_secret=self.kwargs['api_endpoint'],
+            )
+
+            try:
+                msg = self.cat_api_iface.get_equipment_overview(self.machine_make, self.machine_model, self.machine_serial_number)
+            except Exception as e:
+                self.add_to_log("ERROR could not retrieve equipment overview from cat API " + str(e))
+
+            if msg is not None:
+                self.uplink_recv_channel.publish(
+                    msg_str=msg
+                )
+
+    def get_cat_keys(self):
+        # retrieve cat key id and key secret from the deployment config
+        if self.kwargs['agent_settings'] is not None and 'deployment_config' in self.kwargs['agent_settings'] and self.kwargs['agent_settings']['deployment_config'] is not None:
+            deployment_config = self.kwargs['agent_settings']['deployment_config']
+            if 'cat_api_key' in deployment_config and 'cat_api_secret' in deployment_config:
+                self.cat_key_id = deployment_config['cat_api_id']
+                self.cat_key_secret = deployment_config['cat_api_secret']
+                return True
+        return False
+    
+    def get_machine_details(self):
+        if self.kwargs['agent_settings'] is not None and 'deployment_config' in self.kwargs['agent_settings'] and self.kwargs['agent_settings']['deployment_config'] is not None:
+            deployment_config = self.kwargs['agent_settings']['deployment_config']
+            if 'serial_number' and '' and '' in deployment_config:
+                self.machine_serial_number = deployment_config['machine_serial_number']
+                self.machine_model = deployment_config['machine_model']
+                self.machine_make = deployment_config['machine_make']
+                
+        return False
+            
+    def add_to_log(self, msg):
+        if not hasattr(self, '_log'):
+            self._log = ""
+        self._log = self._log + str(msg) + "\n"
