@@ -137,7 +137,9 @@ if __name__ == "__main__":
     )
 
     # cat_api.retrieve_fleet_data()
-    print(cat_api.get_equipment_overview("CAT", "789C", "2BW90008"))
+    test = cat_api.get_equipment_overview("CAT", "789C", "2BW90008")
+    print(test["Equipment"][0])
+    print(type((test["Equipment"][0])))
     # cat_api.print_all_equipment()
 
     # fleet_overview = cat_api.get_fleet_overview()
