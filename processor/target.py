@@ -194,6 +194,7 @@ class target:
                 self.machine_serial_number = deployment_config['machine_serial_number']
                 self.machine_model = deployment_config['machine_model']
                 self.machine_make = deployment_config['machine_make']
+                self.add_to_log("machine details retrieved" + str(self.machine_serial_number) + " " + str(self.machine_model) + " " + str(self.machine_make))
                 
         return False
             
