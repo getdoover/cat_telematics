@@ -116,6 +116,8 @@ class target:
             }
         }
 
+        self.add_to_log("deploying ui state " + str(ui_obj))
+
         ui_state_channel.publish(
             msg_str=json.dumps(ui_obj)
         )
