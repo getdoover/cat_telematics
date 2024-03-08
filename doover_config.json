@@ -24,7 +24,7 @@
                 },
                 "subscriptions" : [
                     {
-                        "channel_name" : "tts_uplink_recv",
+                        "channel_name" : "uplink_recv",
                         "is_active" : true
                     }
                 ]

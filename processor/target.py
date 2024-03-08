@@ -75,9 +75,29 @@ class target:
             channel_name='activity_logs',
         )
 
+        ## Get the state channel
+        self.ui_state_channel = self.cli.get_channel(
+            channel_name="ui_state",
+            agent_id=self.kwargs['agent_id']
+        )
+
+        ## Get the cmds channel
+        self.ui_cmds_channel = self.cli.get_channel(
+            channel_name="ui_cmds",
+            agent_id=self.kwargs['agent_id']
+        )
+
+        ## Get the location channel
+        self.location_channel = self.cli.get_channel(
+            channel_name="location",
+            agent_id=self.kwargs['agent_id']
+        )
+
         self.add_to_log( "running : " + str(os.getcwd()) + " " + str(__file__) )
         self.add_to_log( "kwargs = " + str(self.kwargs) )
         self.add_to_log( str( start_time ) )
+
+        self.get_machine_details()
 
         try:
             ## Do any processing you would like to do here
@@ -95,7 +115,6 @@ class target:
                 self.uplink()
 
             if message_type == "FETCH":
-                self.add_to_log("fetching...")
                 self.fetch()
 
         except Exception as e:
@@ -123,7 +142,33 @@ class target:
                         "name": "significantEvent",
                         "displayString": "Notify me of any problems"
                     },
-                    
+                    "location" : {
+                        "type" : "uiVariable",
+                        "varType" : "location",
+                        "hide" : True,
+                        "name" : "location",
+                        "displayString" : "Location",
+                    },
+                    "engineOn" : {
+                        "type" : "uiVariable",
+                        "varType" : "bool",
+                        "name" : "engineOn",
+                        "displayString" : "Engine On",
+                    },
+                    "deviceRunHours" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "deviceRunHours",
+                        "displayString" : "Engine Hours (hrs)",
+                        "decPrecision": 2,
+                    },
+                    "deviceOdometer" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "deviceOdometer",
+                        "displayString" : "Machine Odometer (km)",
+                        "decPrecision": 1,
+                    },
                     "node_connection_info": {
                         "type": "uiConnectionInfo",
                         "name": "node_connection_info",
@@ -143,25 +188,114 @@ class target:
 
     def uplink(self):
         ## Run any uplink processing code here
-        self.add_to_log("uplink processing")
+        self.add_to_log("processing uplink ")
+        uplink_aggregate = self.uplink_recv_channel.get_aggregate()
+        self.add_to_log("uplink aggregate type is: " + str(type(uplink_aggregate)))
+        
         ## Get the deployment channel
-        ui_state_channel = self.cli.get_channel(
-            channel_name="ui_state",
-            agent_id=self.kwargs['agent_id']
-        )
+        got_machine_details = self.get_machine_details()
+        check_uplink = self.check_uplink()
 
-        ## Get the deployment channel
-        ui_cmds_channel = self.cli.get_channel(
-            channel_name="ui_cmds",
-            agent_id=self.kwargs['agent_id']
-        )
+        ##run checks for both the deployment config and that the uplink is for the correct device
+        if got_machine_details is False or check_uplink is False:
+            self.add_to_log("ERROR machine details not retrieved")
+            return
 
+        ## Get the location from the uplink aggregate
+        location = None
+        try:
+            location = uplink_aggregate["location"]
+            self.add_to_log("location is: " + str(location)) 
+            long = float(location["Longitude"])
+            lat = float(location["Latitude"])
+            alt = float(location["Altitude"])
+        except Exception as e:
+            self.add_to_log("ERROR could not retrieve location from uplink aggregate " + str(e))
+        
+        position = None
+        if long is not None and lat is not None and alt is not None:
+            position = {
+                            'lat': lat,
+                            'long': long,
+                            'alt': alt,
+                        }
+            self.location_channel.publish(
+                msg_str=json.dumps(position)
+            )
+
+        ## Get the engine status from the uplink aggregate
+        engine_on = None
+        try:
+            engine_on = uplink_aggregate["EngineStatus"]["Running"]
+            self.add_to_log("engine on is: " + str(engine_on))
+        except Exception as e:
+            self.add_to_log("ERROR could not retrieve engine status from uplink aggregate " + str(e))
+        
+        ## Get the engine hours from the uplink aggregate
+        engine_hours = None
+        try:
+            engine_hours = uplink_aggregate["CumulativeOperatingHours"]["Value"]
+            self.add_to_log("engine hours are: " + str(engine_hours))
+        except Exception as e:
+            self.add_to_log("ERROR could not retrieve engine hours from uplink aggregate " + str(e))
+        
+        ## Get the odometer from the uplink aggregate
+        odometer = None
+        try:
+            odometer = uplink_aggregate["Distance"]["Odometer"]
+            self.add_to_log("odometer is: " + str(odometer))
+        except Exception as e:
+            self.add_to_log("ERROR could not retrieve odometer from uplink aggregate " + str(e))
+        
+        self.add_to_log("uplink aggregate " + str(uplink_aggregate))
+
+        self.ui_state_channel.publish(
+            msg_str=json.dumps({
+                "state" : {
+                    "children" : {
+                        "engineOn" : {
+                            "value" : engine_on
+                        },
+                        "deviceRunHours" : {
+                            "value" : engine_hours
+                        },
+                        "deviceOdometer" : {
+                            "value" : odometer
+                        },
+                    }
+                }
+            }),
+            save_log=True
+        )
         # self.compute_output_levels(ui_cmds_channel, ui_state_channel)
         # self.update_reported_signal_strengths(ui_cmds_channel, ui_state_channel)
 
         # ui_state_channel.update() ## Update the details stored in the state channel so that warnings are computed from current values
         # self.assess_warnings(ui_cmds_channel, ui_state_channel)
 
+    def check_uplink(self, uplink_aggregate):
+        if uplink_aggregate is None:
+            self.add_to_log("ERROR no uplink aggregate")
+            return False
+        
+        try:
+            equipment_header = uplink_aggregate["EquipmentHeader"]
+        except Exception as e:
+            self.add_to_log("ERROR no equipment header in uplink aggregate " + str(e))
+            return False
+
+        try:
+            make = equipment_header["OEMName"]
+            model = equipment_header["Model"]
+            serial = equipment_header["SerialNumber"]
+        except Exception as e:
+            self.add_to_log("ERROR could not retrieve make, model, serial from uplink aggregate " + str(e))
+            return False
+        
+        if make is not self.machine_make or model is not self.machine_model or serial is not self.machine_serial_number:
+            self.add_to_log("ERROR machine details do not match uplink aggregate")
+            return False
+        return True
 
     def downlink(self):
         ## Run any downlink processing code here
