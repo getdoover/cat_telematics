@@ -296,17 +296,17 @@ class target:
         
         self.add_to_log("make is: " + str(make) + " type is " + str(type(make)))
         self.add_to_log("machine make is: " + str(self.machine_make) + " type is " + str(type(self.machine_make)))
-        if make is self.machine_make:
+        if str(make) is str(self.machine_make):
             self.add_to_log("make matches uplink aggregate")
         
         self.add_to_log("model is: " + str(model) + " type is " + str(type(model)))
         self.add_to_log("machine model is: " + str(self.machine_model) + " type is " + str(type(self.machine_model)))
-        if model is self.machine_model:
+        if str(model) == str(self.machine_model):
             self.add_to_log("model matches uplink aggregate")
         
         self.add_to_log("serial is: " + str(serial) + " type is " + str(type(serial)))
         self.add_to_log("machine serial is: " + str(self.machine_serial_number) + " type is " + str(type(self.machine_serial_number)))
-        if serial is self.machine_serial_number:
+        if str(serial) is str(self.machine_serial_number):
             self.add_to_log("serial matches uplink aggregate")
         
         
