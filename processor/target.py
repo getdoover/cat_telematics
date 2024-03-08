@@ -175,7 +175,7 @@ class target:
     def fetch(self):
         ## Run any fetch processing code here
         # 
-        self.add_to_log("fetching data from the fetch channel")
+        self.add_to_log("fetching data from the fetch")
         try:
             success = self.get_cat_keys()
             self.add_to_log("cat keys retrieved")
@@ -187,8 +187,9 @@ class target:
             self.add_to_log("machine details retrieved")
         except Exception as e:  
             self.add_to_log("ERROR could not retrieve machine serial number from deployment config " + str(e)) 
-        
-        if success:
+
+        self.add_to_log("success var is " + str(success))
+        if success is True:
             self.cat_api_iface = cat_api_iface(
                 key_id = self.cat_key_id,
                 key_secret = self.cat_key_secret,
