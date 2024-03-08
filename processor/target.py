@@ -174,8 +174,9 @@ class target:
         # 
         self.add_to_log("fetching data from the fetch")
         try:
+            self.add_to_log("retrieving cat keys")
             success = self.get_cat_keys()
-            self.add_to_log("cat keys retrieved")
+            
         except Exception as e:
             self.add_to_log("ERROR could not retrieve cat API keys from deployment config " + str(e))
         
@@ -208,6 +209,7 @@ class target:
     def get_cat_keys(self):
         # retrieve cat key id and key secret from the deployment config
         if self.kwargs['agent_settings'] is not None and 'deployment_config' in self.kwargs['agent_settings'] and self.kwargs['agent_settings']['deployment_config'] is not None:
+            self.add_to_log("passed first test")
             deployment_config = self.kwargs['agent_settings']['deployment_config']
             if 'cat_api_key' in deployment_config and 'cat_api_secret' in deployment_config:
                 self.cat_key_id = deployment_config['cat_api_id']
@@ -218,8 +220,9 @@ class target:
     
     def get_machine_details(self):
         if self.kwargs['agent_settings'] is not None and 'deployment_config' in self.kwargs['agent_settings'] and self.kwargs['agent_settings']['deployment_config'] is not None:
+            self.add_to_log("passed first test")
             deployment_config = self.kwargs['agent_settings']['deployment_config']
-            if 'serial_number' and '' and '' in deployment_config:
+            if 'machine_serial_number' in deployment_config and 'machine_model' in deployment_config and 'machine_make' in deployment_config:
                 self.machine_serial_number = deployment_config['machine_serial_number']
                 self.machine_model = deployment_config['machine_model']
                 self.machine_make = deployment_config['machine_make']
