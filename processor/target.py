@@ -95,6 +95,7 @@ class target:
                 self.uplink()
 
             if message_type == "FETCH":
+                self.add_to_log("fetching...")
                 self.fetch()
 
         except Exception as e:
