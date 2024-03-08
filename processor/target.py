@@ -280,6 +280,15 @@ class target:
         
         try:
             uplink_aggregate1 = json.loads(uplink_aggregate)
+            self.add_to_log("uplink aggregate is: " + str(uplink_aggregate))
+            self.add_to_log("uplink aggregate type is: " + str(type(uplink_aggregate)))
+            self.add_to_log("uplink json dumps aggregate keys are: " + json.dumps(uplink_aggregate))
+
+
+            self.add_to_log("uplink aggregate1 is: " + str(uplink_aggregate1))
+            self.add_to_log("uplink aggregate1 type is: " + str(type(uplink_aggregate1)))
+            self.add_to_log("uplink aggregate1 keys are: " + str(uplink_aggregate1.keys()))
+            self.add_to_log("uplink aggregate1 values are: " + str(uplink_aggregate1.values()))
             equipment_header = uplink_aggregate1["EquipmentHeader"]
         except Exception as e:
             self.add_to_log("ERROR no equipment header in uplink aggregate " + str(e))
