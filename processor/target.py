@@ -181,8 +181,8 @@ class target:
             self.add_to_log("ERROR could not retrieve cat API keys from deployment config " + str(e))
         
         try:
+            self.add_to_log("retrieving machine details")
             success = self.get_machine_details() and success
-            self.add_to_log("machine details retrieved")
         except Exception as e:  
             self.add_to_log("ERROR could not retrieve machine serial number from deployment config " + str(e)) 
 
@@ -211,11 +211,12 @@ class target:
         if self.kwargs['agent_settings'] is not None and 'deployment_config' in self.kwargs['agent_settings'] and self.kwargs['agent_settings']['deployment_config'] is not None:
             self.add_to_log("passed first test")
             deployment_config = self.kwargs['agent_settings']['deployment_config']
-            if 'cat_api_key' in deployment_config and 'cat_api_secret' in deployment_config:
+            if 'cat_api_id' in deployment_config and 'cat_api_secret' in deployment_config:
                 self.cat_key_id = deployment_config['cat_api_id']
                 self.cat_key_secret = deployment_config['cat_api_secret']
                 self.add_to_log("cat keys retrieved" + str(self.cat_key_id) + " " + str(self.cat_key_secret))
                 return True
+        self.add_to_log("cat keys not retrieved")
         return False
     
     def get_machine_details(self):
@@ -226,7 +227,7 @@ class target:
                 self.machine_serial_number = deployment_config['machine_serial_number']
                 self.machine_model = deployment_config['machine_model']
                 self.machine_make = deployment_config['machine_make']
-                self.add_to_log("machine details retrieved" + str(self.machine_serial_number) + " " + str(self.machine_model) + " " + str(self.machine_make))
+                self.add_to_log("machine details retrieved " + str(self.machine_serial_number) + " " + str(self.machine_model) + " " + str(self.machine_make))
                 return True
         return False
             
