@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 from operator import truediv
-import os, traceback, sys, time, json, math
+import os, traceback, sys, time, json, datetime, pytz, traceback, math
 from signal import signal
+from dateutil.relativedelta import relativedelta
 
 
 ## This is the definition for a tiny lambda function
@@ -149,12 +150,6 @@ class target:
                         "name" : "location",
                         "displayString" : "Location",
                     },
-                    "engineOn" : {
-                        "type" : "uiVariable",
-                        "varType" : "bool",
-                        "name" : "engineOn",
-                        "displayString" : "Engine On",
-                    },
                     "deviceRunHours" : {
                         "type" : "uiVariable",
                         "varType" : "float",
@@ -168,6 +163,58 @@ class target:
                         "name" : "deviceOdometer",
                         "displayString" : "Machine Odometer (km)",
                         "decPrecision": 1,
+                    },
+                    "nextServiceEst" : {
+                        "type" : "uiVariable",
+                        "varType" : "text",
+                        "name" : "nextServiceEst",
+                        "displayString" : "Next Service Estimate",
+                    },
+                    "daysTillNextService" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "daysTillNextService",
+                        "displayString" : "Days To Next Service (days)",
+                        "decPrecision": 0,
+                    },
+                    "smsServiceAlert": {
+                        "type": "uiAlertStream",
+                        "name": "significantEvent",
+                        "displayString": ("Text me " + str(self.get_sms_alert_days()) + " days before next service"),
+                    },
+                    "hoursTillNextService" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "hoursTillNextService",
+                        "displayString" : "Hours To Next Service (hrs)",
+                        "decPrecision": 1,
+                    },
+                    "kmsTillNextService" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "kmsTillNextService",
+                        "displayString" : "Kms Till Next Service (kms)",
+                        "decPrecision": 1,
+                    },
+                    "aveHoursPerDay" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "aveHoursPerDay",
+                        "displayString" : "Ave Hours Per Day (hrs)",
+                        "decPrecision": 1,
+                    },
+                    "aveKmsPerDay" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "aveKmsPerDay",
+                        "displayString" : "Ave Kms Per Day (kms)",
+                        "decPrecision": 1,
+                    },
+                    "engineOn" : {
+                        "type" : "uiVariable",
+                        "varType" : "bool",
+                        "name" : "engineOn",
+                        "displayString" : "Engine On",
                     },
                     "maintenance_submodule": {
                         "type": "uiSubmodule",
@@ -320,6 +367,14 @@ class target:
         except Exception as e:
             self.add_to_log("ERROR could not retrieve engine status from uplink aggregate " + str(e))
         
+        if engine_on is not None:
+                if not engine_on:
+                    status_icon = "off"
+                    display_string = "Off"
+                else:
+                    status_icon = None
+                    display_string = "Running"
+
         ## Get the engine hours from the uplink aggregate
         engine_hours = None
         try:
@@ -349,6 +404,12 @@ class target:
                         "deviceOdometer" : {
                             "currentValue" : odometer
                         },
+                        "location" : {
+                            "currentValue" : position
+                        },
+                        "nextServiceEst" : {
+                            "currentValue" : next_service_est
+                        }
                     }
                 }
             }),
@@ -459,6 +520,11 @@ class target:
         if not hasattr(self, '_log'):
             self._log = ""
         self._log = self._log + str(msg) + "\n"
+
+    def get_sms_alert_days(self):
+        cmds_obj = self.ui_cmds_channel.get_aggregate()
+        try: return cmds_obj['cmds']['warningSmsPeriod']
+        except: return 14
 
     def complete_log(self):
         if hasattr(self, '_log') and self._log is not None:
