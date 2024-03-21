@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 from operator import truediv
-import os, traceback, sys, time, json, math
+import os, traceback, sys, time, json, pytz, datetime, math
 from signal import signal
+from dateutil.relativedelta import relativedelta
 
 
 ## This is the definition for a tiny lambda function
@@ -142,7 +143,7 @@ class target:
                         "name":"significantEvent",
                         "displayString":"Notify me of any problems"
                     },
-                    "ignitionOn":{
+                    "engineOn":{
                         "type":"uiVariable",
                         "varType":"bool",
                         "name":"engineOn",
@@ -387,6 +388,42 @@ class target:
         except Exception as e:
             self.add_to_log("ERROR could not retrieve odometer from uplink aggregate " + str(e))
 
+        ave_rates = self.get_average_rates(engine_hours, engine_hours, odometer, odometer, self.get_average_use_window_days())
+        
+        next_service_est_dt = self.get_next_service_estimate(engine_hours, odometer, ave_rates['run_hours'], ave_rates['odometer'])
+        
+        next_service_date = self.get_next_service_date()
+        next_service_hours = self.get_next_service_hours()
+        next_service_kms = self.get_next_service_kms()
+
+        next_service_date_str = None
+        if next_service_date is not None:
+            # next_service_date_str = pytz.timezone('Australia/Brisbane').fromutc(next_service_date).strftime('%d/%m/%Y')
+            next_service_date_str = next_service_date.strftime('%d/%m/%Y')
+
+        hours_till_next_service = None
+        if next_service_hours is not None and engine_hours is not None:
+            hours_till_next_service = next_service_hours - engine_hours
+
+        kms_till_next_service = None
+        if next_service_kms is not None and odometer is not None:
+            kms_till_next_service = next_service_kms - odometer
+
+        next_service_est = None
+        service_warning = None
+        days_till_service_due = None
+        prev_days_till_service = None
+        if next_service_est_dt is not None:
+            next_service_est = pytz.timezone('Australia/Brisbane').fromutc(next_service_est_dt).strftime('%d/%m/%Y')
+            prev_days_till_service = self.get_prev_days_till_service()
+            days_till_service_due, service_warning = self.assess_warnings(next_service_est_dt, prev_days_till_service)
+        days_till_service_due_disp = None
+
+        if days_till_service_due is not None:
+            days_till_service_due_disp = int(days_till_service_due)
+
+        prev_days_till_service = days_till_service_due
+            
         self.ui_state_channel.publish(
             msg_str=json.dumps({
                 "state" : {
@@ -399,6 +436,27 @@ class target:
                         },
                         "deviceOdometer" : {
                             "currentValue" : odometer
+                        },
+                        "nextServiceEst" : {
+                            "currentValue" : next_service_est
+                        },
+                        "daysTillNextService" : {
+                            "currentValue" : days_till_service_due_disp,
+                        },
+                        "smsServiceAlert": {
+                            "displayString": ("Text me " + str(self.get_sms_alert_days()) + " days before next service")
+                        },
+                        "hoursTillNextService" : {
+                            "currentValue" : hours_till_next_service,
+                        },
+                        "kmsTillNextService" : {
+                            "currentValue" : kms_till_next_service,
+                        },
+                        "aveHoursPerDay" : {
+                            "currentValue": ave_rates['run_hours'],
+                        },
+                        "aveKmsPerDay" : {
+                            "currentValue": ave_rates['odometer'],
                         },
                     }
                 }
@@ -437,6 +495,171 @@ class target:
         else:
             self.add_to_log("ERROR machine details do not match uplink aggregate")
             return False
+
+    def get_average_use_window_days(self):
+        cmds_obj = self.ui_cmds_channel.get_aggregate()
+        try: return cmds_obj['cmds']['aveCalcDays']
+        except: return 14
+
+    def get_last_service_date(self):
+        cmds_obj = self.ui_cmds_channel.get_aggregate()
+        try: return datetime.datetime.fromtimestamp( cmds_obj['cmds']['lastServiceDate'] )
+        except: return None
+
+    def get_service_interval_months(self):
+        cmds_obj = self.ui_cmds_channel.get_aggregate()
+        try: return float(cmds_obj['cmds']['serviceIntervalMonths'])
+        except: return None
+
+    def get_next_service_date(self):
+        last_service_date = self.get_last_service_date()
+        if last_service_date is None:
+            return None
+
+        service_interval_months = self.get_service_interval_months()
+        if service_interval_months is None:
+            return None
+        
+        service_interval_months = math.ceil(service_interval_months)
+        if service_interval_months == 0:
+            return None
+        
+        try:
+            # return last_service_date + datetime.timedelta(months=service_interval_months)
+            return last_service_date + relativedelta(months=service_interval_months)
+        except Exception as e:
+            self.add_to_log("Error calculating next service date " + str(e))
+            return None
+        
+    def get_last_service_hours(self):
+        cmds_obj = self.ui_cmds_channel.get_aggregate()
+        try: return float(cmds_obj['cmds']['lastServiceHours'])
+        except: return None
+    
+    def get_service_interval_hours(self):
+        cmds_obj = self.ui_cmds_channel.get_aggregate()
+        try: return float(cmds_obj['cmds']['serviceIntervalHours'])
+        except: return None
+
+    def get_next_service_hours(self):
+        last_service_hours = self.get_last_service_hours()
+        if last_service_hours is None:
+            return None
+        
+        service_interval_hours = self.get_service_interval_hours()
+        if service_interval_hours is None:
+            return None
+        
+        next_service_hours = last_service_hours + service_interval_hours
+        return next_service_hours
+
+    def get_last_service_kms(self):
+        cmds_obj = self.ui_cmds_channel.get_aggregate()
+        try: return float(cmds_obj['cmds']['lastServiceOdo'])
+        except: return None
+
+    def get_service_interval_kms(self):
+        cmds_obj = self.ui_cmds_channel.get_aggregate()
+        try: return float(cmds_obj['cmds']['serviceIntervalOdo'])
+        except: return None
+        
+    def get_next_service_kms(self):
+        last_service_kms = self.get_last_service_kms()
+        if last_service_kms is None:
+            return None
+        
+        service_interval_kms = self.get_service_interval_kms()
+        if service_interval_kms is None:
+            return None
+        
+        next_service_kms = last_service_kms + service_interval_kms
+        return next_service_kms
+
+
+    def get_average_rates(self, raw_curr_hours, curr_hours, raw_curr_odo, curr_odo, window_days, recursive_count=2, init_hrs_per_day=None, init_kms_per_day=None):
+
+        window_start = int( (datetime.datetime.now() - datetime.timedelta(days=window_days)).timestamp() )
+        window_end = int( (datetime.datetime.now() - datetime.timedelta(days=(window_days-0.3))).timestamp() )
+        
+        self.add_to_log("Searching for messages between " + str(window_start) + " to " + str(window_end))
+        
+        messages = self.ui_state_channel.get_messages_in_window(window_start, window_end)
+
+        hours_per_day = init_hrs_per_day
+        kms_per_day = init_kms_per_day
+
+        for m in messages:
+            payload = m.get_payload()
+            if payload is not None:
+                if hours_per_day is None:
+                    raw_run_hours = None
+                    run_hours = None
+
+                    ## try using raw hours first
+                    try: 
+                        raw_run_hours = payload['state']['children']['rawRunHours']['currentValue']
+                    except: 
+                        self.add_to_log("No rawRunHours in message payload " + str(m.message_id))
+                        try: run_hours = payload['state']['children']['deviceRunHours']['currentValue']
+                        except: self.add_to_log("No deviceRunHours in message payload " + str(m.message_id))
+
+                    if raw_run_hours is not None:
+                        self.add_to_log("found raw run hours = " + str(raw_run_hours))
+                        hours_per_day = (raw_curr_hours - raw_run_hours) / window_days
+                    elif run_hours is not None:
+                        self.add_to_log("found run hours = " + str(run_hours))
+                        hours_per_day = (curr_hours - run_hours) / window_days
+
+                if kms_per_day is None:
+                    raw_odometer = None
+                    odometer = None
+
+                    ## try using raw odo first
+                    try: raw_odometer = payload['state']['children']['rawOdometer']['currentValue']
+                    except: 
+                        self.add_to_log("No rawOdometer in message payload " + str(m.message_id))
+                        try: odometer = payload['state']['children']['deviceOdometer']['currentValue']
+                        except: self.add_to_log("No deviceOdometer in message payload " + str(m.message_id))
+
+                    if raw_odometer is not None:
+                        self.add_to_log("found raw odometer = " + str(raw_odometer))
+                        kms_per_day = (raw_curr_odo - raw_odometer) / window_days
+                    elif odometer is not None:
+                        self.add_to_log("found initial odometer = " + str(odometer))
+                        kms_per_day = (curr_odo - odometer) / window_days
+
+        if recursive_count > 0 and (hours_per_day is None or kms_per_day is None):
+            self.add_to_log("No deviceRunHours in any messages in window " + str(window_start) + " to " + str(window_end) + ". Running recursively")
+            return self.get_average_rates(raw_curr_hours, curr_hours, raw_curr_odo, curr_odo, window_days/2, recursive_count=recursive_count-1, init_hrs_per_day=hours_per_day, init_kms_per_day=kms_per_day)
+
+        return {
+            'run_hours' : hours_per_day,
+            'odometer' : kms_per_day
+        }
+    
+    def get_next_service_estimate(self, curr_hours, device_odometer, ave_run_hours, ave_odometer):
+        next_service_est_hours = None
+        next_service_est_kms = None
+        next_service_est_date = self.get_next_service_date()
+
+        if curr_hours is not None and ave_run_hours is not None and self.get_next_service_hours() is not None:
+            hours_to_run = self.get_next_service_hours() - curr_hours
+            days_to_run = hours_to_run / ave_run_hours
+            next_service_est_hours = datetime.datetime.now() + datetime.timedelta(days=days_to_run)
+
+        if device_odometer is not None and ave_odometer is not None and self.get_next_service_kms() is not None:
+            kms_to_run = self.get_next_service_kms() - device_odometer
+            days_to_run = kms_to_run / ave_odometer
+            next_service_est_kms = datetime.datetime.now() + datetime.timedelta(days=days_to_run)
+
+        results = [ next_service_est_hours, next_service_est_kms, next_service_est_date ]
+        self.add_to_log("Service estimates = " + str(results) + " for " + str(curr_hours) + " hours and " + str(device_odometer) + " kms")
+
+        results = [ r for r in results if r is not None ]
+        if len(results) > 0:
+            selected = min(results)
+            return selected
+        return None
 
     def downlink(self):
         ## Run any downlink processing code here
@@ -524,3 +747,4 @@ class target:
             access_token=self.kwargs['access_token'],
             endpoint=self.kwargs['api_endpoint'],
         )
+
