@@ -682,9 +682,8 @@ class target:
                     try: 
                         raw_run_hours = payload['state']['children']['rawRunHours']['currentValue']
                     except: 
-                        self.add_to_log("No rawRunHours in message payload " + str(m.message_id))
                         try: run_hours = payload['state']['children']['deviceRunHours']['currentValue']
-                        except: self.add_to_log("No deviceRunHours in message payload " + str(m.message_id))
+                        except: pass
 
                     if raw_run_hours is not None:
                         self.add_to_log("found raw run hours = " + str(raw_run_hours))
@@ -700,9 +699,8 @@ class target:
                     ## try using raw odo first
                     try: raw_odometer = payload['state']['children']['rawOdometer']['currentValue']
                     except: 
-                        self.add_to_log("No rawOdometer in message payload " + str(m.message_id))
                         try: odometer = payload['state']['children']['deviceOdometer']['currentValue']
-                        except: self.add_to_log("No deviceOdometer in message payload " + str(m.message_id))
+                        except: pass
 
                     if raw_odometer is not None:
                         self.add_to_log("found raw odometer = " + str(raw_odometer))
