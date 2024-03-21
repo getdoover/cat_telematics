@@ -530,7 +530,90 @@ class target:
         except Exception as e:
             self.add_to_log("Error calculating next service date " + str(e))
             return None
+
+    def assess_warnings(self, next_service_est_dt, prev_days_till_service):
+
+        if next_service_est_dt is None:
+            self.add_to_log("No next service estimate - skipping warnings")
+            return
+
+        curr_dt = datetime.datetime.now()
+        time_to_service_days = (next_service_est_dt - curr_dt) / datetime.timedelta(days=1)
+        self.add_to_log("Time to service = " + str(time_to_service_days) + " days")
+
+        warning_days = self.get_sms_alert_days()
+        service_warning = None
+        if time_to_service_days <= warning_days:
+
+            warning_msg = "Service due in " + str(int(time_to_service_days)) + " days"
+            if time_to_service_days < 0:
+                warning_msg = "Service overdue"
+
+            service_warning = {
+                "type": "uiWarningIndicator",
+                "name": "serviceDueWarning",
+                "displayString": warning_msg
+            }
+
+            last_notification_age = self.get_last_notification_age()
+
+            if (prev_days_till_service is None or prev_days_till_service > warning_days) and (last_notification_age is None or last_notification_age > (48 * 60 * 60)):
+                self.add_to_log("Sending SMS alert")
+
+                ## record the last notification time to prevent multiple notifications
+                self.set_last_notification_time()
+
+                days_till_service = int(time_to_service_days)
+                if days_till_service > 0:
+                    msg = "Service is due in " + str(days_till_service) + " days"
+                elif days_till_service == 0:
+                    msg = "Service is due today"
+                else:
+                    msg = "Service is overdue by " + str(abs(days_till_service)) + " days"
+
+                self.notifications_channel.publish(
+                    msg_str=msg
+                )
+                self.recent_activity_channel.publish(
+                    msg_str=json.dumps({
+                        "activity_log" : {
+                            "action_string" : msg
+                        }
+                    })
+                )
+
+        return time_to_service_days, service_warning
+
+    def set_last_notification_time(self, timestamp=None):
+        if timestamp is None:
+            timestamp = int(time.time())
+        self.last_notification_time = timestamp
+
+    def get_internal_last_notification_age(self):
+        if hasattr(self, 'last_notification_time') and self.last_notification_time is not None:
+            return int(int(time.time()) - self.last_notification_time)
+        return None
         
+    def get_last_notification_age(self):
+
+        internal_last_notification_age = self.get_internal_last_notification_age()
+        if internal_last_notification_age is not None:
+            return internal_last_notification_age
+
+        notifications_messages = self.notifications_channel.get_messages()
+
+        last_notification_age = None
+        if len(notifications_messages) > 0:
+            try:
+                last_notif_message = notifications_messages[0].update()
+                last_notification_age = last_notif_message['current_time'] - last_notif_message['timestamp']
+            except Exception as e:
+                self.add_to_log("Could not get age of last notification - " + str(e))
+                pass  
+
+        return last_notification_age
+
+
     def get_last_service_hours(self):
         cmds_obj = self.ui_cmds_channel.get_aggregate()
         try: return float(cmds_obj['cmds']['lastServiceHours'])
@@ -637,6 +720,11 @@ class target:
             'odometer' : kms_per_day
         }
     
+    def get_prev_days_till_service(self):
+        state_obj = self.ui_state_channel.get_aggregate()
+        try: return state_obj['state']['children']['prevDaysTillService']['currentValue']
+        except: return None
+
     def get_next_service_estimate(self, curr_hours, device_odometer, ave_run_hours, ave_odometer):
         next_service_est_hours = None
         next_service_est_kms = None
