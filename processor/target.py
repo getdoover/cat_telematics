@@ -142,73 +142,6 @@ class target:
                         "name":"significantEvent",
                         "displayString":"Notify me of any problems"
                     },
-                    "speed":{
-                        "type":"uiVariable",
-                        "varType":"float",
-                        "name":"speed",
-                        "displayString":"Speed (km/h)",
-                        "decPrecision":1,
-                        "form":"radialGauge",
-                        "ranges":[
-                            {
-                                "label":"Low",
-                                "min":0,
-                                "max":20,
-                                "colour":"blue",
-                                "showOnGraph":True
-                            },
-                            {
-                                "min":20,
-                                "max":80,
-                                "colour":"green",
-                                "showOnGraph":True
-                            },
-                            {
-                                "label":"Fast",
-                                "min":80,
-                                "max":120,
-                                "colour":"yellow",
-                                "showOnGraph":True
-                            }
-                        ]
-                    },
-                    "gpsAccuracy":{
-                        "type":"uiVariable",
-                        "varType":"float",
-                        "name":"gpsAccuracy",
-                        "displayString":"GPS accuracy (m)",
-                        "decPrecision":0,
-                        "ranges":[
-                            {
-                                "label":"Good",
-                                "min":0,
-                                "max":15,
-                                "colour":"green",
-                                "showOnGraph":True
-                            },
-                            {
-                                "label":"Ok",
-                                "min":15,
-                                "max":30,
-                                "colour":"blue",
-                                "showOnGraph":True
-                            },
-                            {
-                                "label":"Bad",
-                                "min":30,
-                                "max":80,
-                                "colour":"yellow",
-                                "showOnGraph":True
-                            },
-                            {
-                                "label":"Lost",
-                                "min":80,
-                                "max":100,
-                                "colour":"red",
-                                "showOnGraph":True
-                            }
-                        ]
-                    },
                     "ignitionOn":{
                         "type":"uiVariable",
                         "varType":"bool",
@@ -222,157 +155,6 @@ class target:
                         "displayString":"Engine Hours (hrs)",
                         "decPrecision":2
                     },
-                    "deviceOdometer":{
-                        "type":"uiVariable",
-                        "varType":"float",
-                        "name":"deviceOdometer",
-                        "displayString":"Machine Odometer (km)",
-                        "decPrecision":1
-                    },
-                    "sysVoltage":{
-                        "type":"uiVariable",
-                        "varType":"float",
-                        "name":"sysVoltage",
-                        "displayString":"System Voltage (V)",
-                        "decPrecision":1,
-                        "ranges":[
-                            {
-                                "label":"Low",
-                                "min":9,
-                                "max":11.5,
-                                "colour":"yellow",
-                                "showOnGraph":True
-                            },
-                            {
-                                "min":11.5,
-                                "max":13.0,
-                                "colour":"blue",
-                                "showOnGraph":True
-                            },
-                            {
-                                "label":"Charging",
-                                "min":13.0,
-                                "max":14.2,
-                                "colour":"green",
-                                "showOnGraph":True
-                            },
-                            {
-                                "label":"Over Voltage",
-                                "min":14.2,
-                                "max":15.0,
-                                "colour":"yellow",
-                                "showOnGraph":True
-                            }
-                        ]
-                    },
-                    "battVoltage":{
-                        "type":"uiVariable",
-                        "varType":"float",
-                        "name":"battVoltage",
-                        "displayString":"Tracker Battery (V)",
-                        "decPrecision":1,
-                        "ranges":[
-                            {
-                                "label":"Low",
-                                "min":3.0,
-                                "max":3.5,
-                                "colour":"yellow",
-                                "showOnGraph":True
-                            },
-                            {
-                                "min":3.5,
-                                "max":3.8,
-                                "colour":"blue",
-                                "showOnGraph":True
-                            },
-                            {
-                                "label":"Good",
-                                "min":3.8,
-                                "max":4.2,
-                                "colour":"green",
-                                "showOnGraph":True
-                            },
-                            {
-                                "label":"Over Voltage",
-                                "min":4.2,
-                                "max":4.5,
-                                "colour":"yellow",
-                                "showOnGraph":True
-                            }
-                        ]
-                    },
-                    "dataSignalStrength":{
-                        "type":"uiVariable",
-                        "varType":"float",
-                        "name":"dataSignalStrength",
-                        "displayString":"Cellular Signal (%)",
-                        "decPrecision":0,
-                        "ranges":[
-                            {
-                                "label":"Low",
-                                "min":0,
-                                "max":30,
-                                "colour":"yellow",
-                                "showOnGraph":True
-                            },
-                            {
-                                "label":"Ok",
-                                "min":30,
-                                "max":60,
-                                "colour":"blue",
-                                "showOnGraph":True
-                            },
-                            {
-                                "label":"Strong",
-                                "min":60,
-                                "max":100,
-                                "colour":"green",
-                                "showOnGraph":True
-                            }
-                        ]
-                    },
-                    "deviceTemp":{
-                        "type":"uiVariable",
-                        "varType":"float",
-                        "name":"deviceTemp",
-                        "displayString":"Device Temperature (C)",
-                        "decPrecision":0,
-                        "ranges":[
-                            {
-                                "label":"Low",
-                                "min":0,
-                                "max":20,
-                                "colour":"blue",
-                                "showOnGraph":True
-                            },
-                            {
-                                "min":20,
-                                "max":35,
-                                "colour":"green",
-                                "showOnGraph":True
-                            },
-                            {
-                                "label":"Warm",
-                                "min":35,
-                                "max":50,
-                                "colour":"yellow",
-                                "showOnGraph":True
-                            }
-                        ]
-                    },
-                    "lastUplinkReason":{
-                        "type":"uiVariable",
-                        "varType":"text",
-                        "name":"lastUplinkReason",
-                        "displayString":"Reason for uplink"
-                    },
-                    "deviceTimeUtc":{
-                        "type":"uiConnectionInfo",
-                        "name":"node_connection_info",
-                        "connectionType":"periodic",
-                        "connectionPeriod":600,
-                        "nextConnection":600
-                    },
                     "location":{
                         "type":"uiVariable",
                         "varType":"location",
@@ -380,12 +162,58 @@ class target:
                         "name":"location",
                         "displayString":"Location"
                     },
-                    "engineOn":{
+                    "deviceOdometer":{
                         "type":"uiVariable",
                         "varType":"float",
                         "name":"deviceOdometer",
                         "displayString":"Machine Odometer (km)",
                         "decPrecision":1
+                    },
+                    "nextServiceEst" : {
+                        "type" : "uiVariable",
+                        "varType" : "text",
+                        "name" : "nextServiceEst",
+                        "displayString" : "Next Service Estimate",
+                    },
+                    "daysTillNextService" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "daysTillNextService",
+                        "displayString" : "Days To Next Service (days)",
+                        "decPrecision": 0,
+                    },
+                    "smsServiceAlert": {
+                        "type": "uiAlertStream",
+                        "name": "significantEvent",
+                        "displayString": ("Text me " + str(self.get_sms_alert_days()) + " days before next service"),
+                    },
+                    "hoursTillNextService" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "hoursTillNextService",
+                        "displayString" : "Hours To Next Service (hrs)",
+                        "decPrecision": 1,
+                    },
+                    "kmsTillNextService" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "kmsTillNextService",
+                        "displayString" : "Kms Till Next Service (kms)",
+                        "decPrecision": 1,
+                    },
+                    "aveHoursPerDay" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "aveHoursPerDay",
+                        "displayString" : "Ave Hours Per Day (hrs)",
+                        "decPrecision": 1,
+                    },
+                    "aveKmsPerDay" : {
+                        "type" : "uiVariable",
+                        "varType" : "float",
+                        "name" : "aveKmsPerDay",
+                        "displayString" : "Ave Kms Per Day (kms)",
+                        "decPrecision": 1,
                     },
                     "maintenance_submodule":{
                         "type":"uiSubmodule",
@@ -492,6 +320,11 @@ class target:
         ui_state_channel.publish(
             msg_str=json.dumps(ui_obj)
         )
+
+    def get_sms_alert_days(self):
+        cmds_obj = self.ui_cmds_channel.get_aggregate()
+        try: return cmds_obj['cmds']['warningSmsPeriod']
+        except: return 14
 
     def uplink(self):
         ## Run any uplink processing code here
