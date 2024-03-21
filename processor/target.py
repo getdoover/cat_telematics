@@ -476,7 +476,7 @@ class target:
     def get_last_connection_to_device(self, engine_date):
         try:
             # Convert ISO 8601 formatted string to datetime object
-            dt_object = datetime.fromisoformat(engine_date.rstrip('Z'))
+            dt_object = datetime.date.fromisoformat(engine_date.rstrip('Z'))
 
             # Convert datetime object to Unix timestamp (epoch time)
             epoch_time = int(dt_object.timestamp())
