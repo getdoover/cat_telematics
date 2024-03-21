@@ -110,6 +110,21 @@ class doover_api_iface:
 
         return json.loads( res.text )
 
+    def get_messages_in_window(self, channel_id, agent_id, channel_name, start_time_utc_secs, end_time_utc_secs):
+
+        if channel_id is not None:
+            url = '/ch/v1/channel/' + str(channel_id) + '/'
+        elif agent_id is not None and channel_name is not None:
+            url = "/ch/v1/agent/" + str(agent_id) + "/" + str(channel_name) + "/"
+
+        url = url + 'messages/time/' + str(start_time_utc_secs) + '/' + str(end_time_utc_secs) + '/'
+        
+        res = self.make_get_request(
+            url=url,
+            data=None,
+        )
+
+        return json.loads( res.text )
 
     def publish_to_channel(self, msg_str, channel_id=None, agent_id=None, channel_name=None):
 
