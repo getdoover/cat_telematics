@@ -239,21 +239,34 @@ class channel:
         return result
  
 
-    def get_messages_in_window(self, channel_id, agent_id, channel_name, start_time_utc_secs, end_time_utc_secs):
-
-        if channel_id is not None:
-            url = '/ch/v1/channel/' + str(channel_id) + '/'
-        elif agent_id is not None and channel_name is not None:
-            url = "/ch/v1/agent/" + str(agent_id) + "/" + str(channel_name) + "/"
-
-        url = url + 'messages/time/' + str(start_time_utc_secs) + '/' + str(end_time_utc_secs) + '/'
+    def get_messages_in_window(self, start_time_utc_secs, end_time_utc_secs):
         
-        res = self.make_get_request(
-            url=url,
-            data=None,
+        result = self.api_client.get_messages_in_window(
+            channel_id=self.channel_id,
+            agent_id=self.agent_id,
+            channel_name=self.channel_name,
+            start_time_utc_secs=start_time_utc_secs,
+            end_time_utc_secs=end_time_utc_secs,
         )
 
-        return json.loads( res.text )
+        messages = result['messages']
+        result = []
+        for m in messages:
+
+            message_id = m['message']
+            agent_id = m['agent']
+            channel_id = self.channel_id
+
+            new_message = message_log(
+                api_client=self.api_client,
+                channel_id=channel_id,
+                message_id=message_id,
+                json_result=m,
+            )
+
+            result.append(new_message)
+
+        return result
 
     def publish(self, msg_str, save_log=True, log_aggregate=False ):
 
