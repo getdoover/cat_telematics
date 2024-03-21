@@ -394,7 +394,7 @@ class target:
                         "children":{
                             "lastServiceDate":{
                                 "type":"uiDatetimeParam",
-                                "includeTime":false,
+                                "includeTime":False,
                                 "name":"lastServiceDate",
                                 "displayString":"Last service done"
                             },
