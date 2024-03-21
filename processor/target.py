@@ -155,20 +155,20 @@ class target:
                                 "min":0,
                                 "max":20,
                                 "colour":"blue",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "min":20,
                                 "max":80,
                                 "colour":"green",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "label":"Fast",
                                 "min":80,
                                 "max":120,
                                 "colour":"yellow",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             }
                         ]
                     },
@@ -184,28 +184,28 @@ class target:
                                 "min":0,
                                 "max":15,
                                 "colour":"green",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "label":"Ok",
                                 "min":15,
                                 "max":30,
                                 "colour":"blue",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "label":"Bad",
                                 "min":30,
                                 "max":80,
                                 "colour":"yellow",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "label":"Lost",
                                 "min":80,
                                 "max":100,
                                 "colour":"red",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             }
                         ]
                     },
@@ -241,27 +241,27 @@ class target:
                                 "min":9,
                                 "max":11.5,
                                 "colour":"yellow",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "min":11.5,
                                 "max":13.0,
                                 "colour":"blue",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "label":"Charging",
                                 "min":13.0,
                                 "max":14.2,
                                 "colour":"green",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "label":"Over Voltage",
                                 "min":14.2,
                                 "max":15.0,
                                 "colour":"yellow",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             }
                         ]
                     },
@@ -277,27 +277,27 @@ class target:
                                 "min":3.0,
                                 "max":3.5,
                                 "colour":"yellow",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "min":3.5,
                                 "max":3.8,
                                 "colour":"blue",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "label":"Good",
                                 "min":3.8,
                                 "max":4.2,
                                 "colour":"green",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "label":"Over Voltage",
                                 "min":4.2,
                                 "max":4.5,
                                 "colour":"yellow",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             }
                         ]
                     },
@@ -313,21 +313,21 @@ class target:
                                 "min":0,
                                 "max":30,
                                 "colour":"yellow",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "label":"Ok",
                                 "min":30,
                                 "max":60,
                                 "colour":"blue",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "label":"Strong",
                                 "min":60,
                                 "max":100,
                                 "colour":"green",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             }
                         ]
                     },
@@ -343,20 +343,20 @@ class target:
                                 "min":0,
                                 "max":20,
                                 "colour":"blue",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "min":20,
                                 "max":35,
                                 "colour":"green",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             },
                             {
                                 "label":"Warm",
                                 "min":35,
                                 "max":50,
                                 "colour":"yellow",
-                                "showOnGraph":true
+                                "showOnGraph":True
                             }
                         ]
                     },
@@ -376,7 +376,7 @@ class target:
                     "location":{
                         "type":"uiVariable",
                         "varType":"location",
-                        "hide":true,
+                        "hide":True,
                         "name":"location",
                         "displayString":"Location"
                     },
@@ -486,7 +486,7 @@ class target:
                 }
             }
         }
-        
+
         self.add_to_log("deploying ui state " + str(ui_obj))
 
         ui_state_channel.publish(
