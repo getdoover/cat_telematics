@@ -195,6 +195,7 @@ class channel:
             channel_id=None,
             agent_id=None,
             channel_name=None,
+            json_result=None,
         ):
 
         self.api_client = api_client
@@ -204,7 +205,7 @@ class channel:
         self.agent_id = agent_id
         self.channel_name = channel_name
 
-        self.json_result = None
+        self.json_result = json_result
 
 
     def update(self):
