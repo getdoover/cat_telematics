@@ -133,142 +133,360 @@ class target:
         )
 
         ui_obj = {
-            "state" : {
-                "type": "uiContianer",
-                "displayString": "",
-                "children": {
-                    "significantEvent": {
-                        "type": "uiAlertStream",
-                        "name": "significantEvent",
-                        "displayString": "Notify me of any problems"
+            "state":{
+                "type":"uiContianer",
+                "displayString":"",
+                "children":{
+                    "significantEvent":{
+                        "type":"uiAlertStream",
+                        "name":"significantEvent",
+                        "displayString":"Notify me of any problems"
                     },
-                    "location" : {
-                        "type" : "uiVariable",
-                        "varType" : "location",
-                        "hide" : True,
-                        "name" : "location",
-                        "displayString" : "Location",
+                    "speed":{
+                        "type":"uiVariable",
+                        "varType":"float",
+                        "name":"speed",
+                        "displayString":"Speed (km/h)",
+                        "decPrecision":1,
+                        "form":"radialGauge",
+                        "ranges":[
+                            {
+                                "label":"Low",
+                                "min":0,
+                                "max":20,
+                                "colour":"blue",
+                                "showOnGraph":true
+                            },
+                            {
+                                "min":20,
+                                "max":80,
+                                "colour":"green",
+                                "showOnGraph":true
+                            },
+                            {
+                                "label":"Fast",
+                                "min":80,
+                                "max":120,
+                                "colour":"yellow",
+                                "showOnGraph":true
+                            }
+                        ]
                     },
-                    "engineOn" : {
-                        "type" : "uiVariable",
-                        "varType" : "bool",
-                        "name" : "engineOn",
-                        "displayString" : "Engine On",
+                    "gpsAccuracy":{
+                        "type":"uiVariable",
+                        "varType":"float",
+                        "name":"gpsAccuracy",
+                        "displayString":"GPS accuracy (m)",
+                        "decPrecision":0,
+                        "ranges":[
+                            {
+                                "label":"Good",
+                                "min":0,
+                                "max":15,
+                                "colour":"green",
+                                "showOnGraph":true
+                            },
+                            {
+                                "label":"Ok",
+                                "min":15,
+                                "max":30,
+                                "colour":"blue",
+                                "showOnGraph":true
+                            },
+                            {
+                                "label":"Bad",
+                                "min":30,
+                                "max":80,
+                                "colour":"yellow",
+                                "showOnGraph":true
+                            },
+                            {
+                                "label":"Lost",
+                                "min":80,
+                                "max":100,
+                                "colour":"red",
+                                "showOnGraph":true
+                            }
+                        ]
                     },
-                    "deviceRunHours" : {
-                        "type" : "uiVariable",
-                        "varType" : "float",
-                        "name" : "deviceRunHours",
-                        "displayString" : "Engine Hours (hrs)",
-                        "decPrecision": 2,
+                    "ignitionOn":{
+                        "type":"uiVariable",
+                        "varType":"bool",
+                        "name":"engineOn",
+                        "displayString":"Engine On"
                     },
-                    "deviceOdometer" : {
-                        "type" : "uiVariable",
-                        "varType" : "float",
-                        "name" : "deviceOdometer",
-                        "displayString" : "Machine Odometer (km)",
-                        "decPrecision": 1,
+                    "deviceRunHours":{
+                        "type":"uiVariable",
+                        "varType":"float",
+                        "name":"deviceRunHours",
+                        "displayString":"Engine Hours (hrs)",
+                        "decPrecision":2
                     },
-                    "maintenance_submodule": {
-                        "type": "uiSubmodule",
-                        "name": "maintenance_submodule",
-                        "displayString": "Maintenance",
-                        "children": {
-                            "lastServiceDate" : {
-                                "type" : "uiDatetimeParam",
-                                "includeTime" : False,
-                                "name" : "lastServiceDate",
-                                "displayString" : "Last service done",
+                    "deviceOdometer":{
+                        "type":"uiVariable",
+                        "varType":"float",
+                        "name":"deviceOdometer",
+                        "displayString":"Machine Odometer (km)",
+                        "decPrecision":1
+                    },
+                    "sysVoltage":{
+                        "type":"uiVariable",
+                        "varType":"float",
+                        "name":"sysVoltage",
+                        "displayString":"System Voltage (V)",
+                        "decPrecision":1,
+                        "ranges":[
+                            {
+                                "label":"Low",
+                                "min":9,
+                                "max":11.5,
+                                "colour":"yellow",
+                                "showOnGraph":true
                             },
-                            "lastServiceHours" : {
-                                "type" : "uiFloatParam",
-                                "min" : 0,
-                                "name" : "lastServiceHours",
-                                "displayString" : "At hours (hrs)",
+                            {
+                                "min":11.5,
+                                "max":13.0,
+                                "colour":"blue",
+                                "showOnGraph":true
                             },
-                            "lastServiceOdo" : {
-                                "type" : "uiFloatParam",
-                                "min" : 0,
-                                "name" : "lastServiceOdo",
-                                "displayString" : "And at Odometer (kms)",
+                            {
+                                "label":"Charging",
+                                "min":13.0,
+                                "max":14.2,
+                                "colour":"green",
+                                "showOnGraph":true
                             },
-                            "serviceIntervalMonths" : {
-                                "type" : "uiFloatParam",
-                                "min" : 0,
-                                "max" : 60,
-                                "name" : "serviceIntervalMonths",
-                                "displayString" : "Service Interval (months)",
+                            {
+                                "label":"Over Voltage",
+                                "min":14.2,
+                                "max":15.0,
+                                "colour":"yellow",
+                                "showOnGraph":true
+                            }
+                        ]
+                    },
+                    "battVoltage":{
+                        "type":"uiVariable",
+                        "varType":"float",
+                        "name":"battVoltage",
+                        "displayString":"Tracker Battery (V)",
+                        "decPrecision":1,
+                        "ranges":[
+                            {
+                                "label":"Low",
+                                "min":3.0,
+                                "max":3.5,
+                                "colour":"yellow",
+                                "showOnGraph":true
                             },
-                            "serviceIntervalHours" : {
-                                "type" : "uiFloatParam",
-                                "min" : 0,
-                                "name" : "serviceIntervalHours",
-                                "displayString" : "Service Interval (hrs)",
+                            {
+                                "min":3.5,
+                                "max":3.8,
+                                "colour":"blue",
+                                "showOnGraph":true
                             },
-                            "serviceIntervalOdo" : {
-                                "type" : "uiFloatParam",
-                                "min" : 0,
-                                "name" : "serviceIntervalOdo",
-                                "displayString" : "Service Interval (kms)",
+                            {
+                                "label":"Good",
+                                "min":3.8,
+                                "max":4.2,
+                                "colour":"green",
+                                "showOnGraph":true
                             },
-                            "nextServiceDue" : {
-                                "type" : "uiVariable",
-                                "varType" : "text",
-                                "name" : "nextServiceDue",
-                                "displayString" : "Next Service due (max)",
+                            {
+                                "label":"Over Voltage",
+                                "min":4.2,
+                                "max":4.5,
+                                "colour":"yellow",
+                                "showOnGraph":true
+                            }
+                        ]
+                    },
+                    "dataSignalStrength":{
+                        "type":"uiVariable",
+                        "varType":"float",
+                        "name":"dataSignalStrength",
+                        "displayString":"Cellular Signal (%)",
+                        "decPrecision":0,
+                        "ranges":[
+                            {
+                                "label":"Low",
+                                "min":0,
+                                "max":30,
+                                "colour":"yellow",
+                                "showOnGraph":true
                             },
-                            "nextServiceHours" : {
-                                "type" : "uiVariable",
-                                "varType" : "float",
-                                "name" : "nextServiceHours",
-                                "displayString" : "At hours (hrs)",
+                            {
+                                "label":"Ok",
+                                "min":30,
+                                "max":60,
+                                "colour":"blue",
+                                "showOnGraph":true
                             },
-                            "nextServiceOdo" : {
-                                "type" : "uiVariable",
-                                "varType" : "float",
-                                "name" : "nextServiceOdo",
-                                "displayString" : "And at Odometer (kms)",
+                            {
+                                "label":"Strong",
+                                "min":60,
+                                "max":100,
+                                "colour":"green",
+                                "showOnGraph":true
+                            }
+                        ]
+                    },
+                    "deviceTemp":{
+                        "type":"uiVariable",
+                        "varType":"float",
+                        "name":"deviceTemp",
+                        "displayString":"Device Temperature (C)",
+                        "decPrecision":0,
+                        "ranges":[
+                            {
+                                "label":"Low",
+                                "min":0,
+                                "max":20,
+                                "colour":"blue",
+                                "showOnGraph":true
+                            },
+                            {
+                                "min":20,
+                                "max":35,
+                                "colour":"green",
+                                "showOnGraph":true
+                            },
+                            {
+                                "label":"Warm",
+                                "min":35,
+                                "max":50,
+                                "colour":"yellow",
+                                "showOnGraph":true
+                            }
+                        ]
+                    },
+                    "lastUplinkReason":{
+                        "type":"uiVariable",
+                        "varType":"text",
+                        "name":"lastUplinkReason",
+                        "displayString":"Reason for uplink"
+                    },
+                    "deviceTimeUtc":{
+                        "type":"uiConnectionInfo",
+                        "name":"node_connection_info",
+                        "connectionType":"periodic",
+                        "connectionPeriod":600,
+                        "nextConnection":600
+                    },
+                    "location":{
+                        "type":"uiVariable",
+                        "varType":"location",
+                        "hide":true,
+                        "name":"location",
+                        "displayString":"Location"
+                    },
+                    "engineOn":{
+                        "type":"uiVariable",
+                        "varType":"float",
+                        "name":"deviceOdometer",
+                        "displayString":"Machine Odometer (km)",
+                        "decPrecision":1
+                    },
+                    "maintenance_submodule":{
+                        "type":"uiSubmodule",
+                        "name":"maintenance_submodule",
+                        "displayString":"Maintenance",
+                        "children":{
+                            "lastServiceDate":{
+                                "type":"uiDatetimeParam",
+                                "includeTime":false,
+                                "name":"lastServiceDate",
+                                "displayString":"Last service done"
+                            },
+                            "lastServiceHours":{
+                                "type":"uiFloatParam",
+                                "min":0,
+                                "name":"lastServiceHours",
+                                "displayString":"At hours (hrs)"
+                            },
+                            "lastServiceOdo":{
+                                "type":"uiFloatParam",
+                                "min":0,
+                                "name":"lastServiceOdo",
+                                "displayString":"And at Odometer (kms)"
+                            },
+                            "serviceIntervalMonths":{
+                                "type":"uiFloatParam",
+                                "min":0,
+                                "max":60,
+                                "name":"serviceIntervalMonths",
+                                "displayString":"Service Interval (months)"
+                            },
+                            "serviceIntervalHours":{
+                                "type":"uiFloatParam",
+                                "min":0,
+                                "name":"serviceIntervalHours",
+                                "displayString":"Service Interval (hrs)"
+                            },
+                            "serviceIntervalOdo":{
+                                "type":"uiFloatParam",
+                                "min":0,
+                                "name":"serviceIntervalOdo",
+                                "displayString":"Service Interval (kms)"
+                            },
+                            "nextServiceDue":{
+                                "type":"uiVariable",
+                                "varType":"text",
+                                "name":"nextServiceDue",
+                                "displayString":"Next Service due (max)"
+                            },
+                            "nextServiceHours":{
+                                "type":"uiVariable",
+                                "varType":"float",
+                                "name":"nextServiceHours",
+                                "displayString":"At hours (hrs)"
+                            },
+                            "nextServiceOdo":{
+                                "type":"uiVariable",
+                                "varType":"float",
+                                "name":"nextServiceOdo",
+                                "displayString":"And at Odometer (kms)"
                             }
                         }
                     },
-                    "config_submodule": {
-                        "type": "uiSubmodule",
-                        "name": "config_submodule",
-                        "displayString": "Config",
-                        "children": {
-                            "setHours" : {
-                                "type" : "uiFloatParam",
-                                "name" : "setHours",
-                                "displayString" : "Set Machine Hours (hrs)",
+                    "config_submodule":{
+                        "type":"uiSubmodule",
+                        "name":"config_submodule",
+                        "displayString":"Config",
+                        "children":{
+                            "setHours":{
+                                "type":"uiFloatParam",
+                                "name":"setHours",
+                                "displayString":"Set Machine Hours (hrs)"
                             },
-                            "setKms" : {
-                                "type" : "uiFloatParam",
-                                "name" : "setKms",
-                                "displayString" : "Set Odometer (km)",
+                            "setKms":{
+                                "type":"uiFloatParam",
+                                "name":"setKms",
+                                "displayString":"Set Odometer (km)"
                             },
-                            "warningSmsPeriod" : {
-                                "type" : "uiFloatParam",
-                                "name" : "warningSmsPeriod",
-                                "displayString" : "SMS Alert Period (days)",
+                            "warningSmsPeriod":{
+                                "type":"uiFloatParam",
+                                "name":"warningSmsPeriod",
+                                "displayString":"SMS Alert Period (days)"
                             },
-                            "aveCalcDays" : {
-                                "type" : "uiFloatParam",
-                                "name" : "aveCalcDays",
-                                "displayString" : "Ave Use Calculation (days)",
+                            "aveCalcDays":{
+                                "type":"uiFloatParam",
+                                "name":"aveCalcDays",
+                                "displayString":"Ave Use Calculation (days)"
                             }
                         }
                     },
-                    "node_connection_info": {
-                        "type": "uiConnectionInfo",
-                        "name": "node_connection_info",
-                        "connectionType": "periodic",
-                        "connectionPeriod": 600,
-                        "nextConnection": 600
+                    "node_connection_info":{
+                        "type":"uiConnectionInfo",
+                        "name":"node_connection_info",
+                        "connectionType":"periodic",
+                        "connectionPeriod":600,
+                        "nextConnection":600
                     }
                 }
             }
         }
-
+        
         self.add_to_log("deploying ui state " + str(ui_obj))
 
         ui_state_channel.publish(
