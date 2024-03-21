@@ -474,8 +474,16 @@ class target:
         # self.assess_warnings(ui_cmds_channel, ui_state_channel)
 
     def get_last_connection_to_device(self, engine_date):
-        t=datetime.datetime(engine_date)
-        return calendar.timegm(t.timetuple())
+        try:
+            # Convert ISO 8601 formatted string to datetime object
+            dt_object = datetime.fromisoformat(engine_date.rstrip('Z'))
+
+            # Convert datetime object to Unix timestamp (epoch time)
+            epoch_time = int(dt_object.timestamp())
+            return epoch_time
+        except ValueError:
+            print("Invalid date string format. Please provide a valid ISO 8601 formatted string.")
+            return None
 
     def check_uplink(self, uplink_aggregate):
         if uplink_aggregate is None:
