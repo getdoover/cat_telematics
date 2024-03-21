@@ -473,8 +473,8 @@ class target:
         # ui_state_channel.update() ## Update the details stored in the state channel so that warnings are computed from current values
         # self.assess_warnings(ui_cmds_channel, ui_state_channel)
 
-    def get_last_connection_to_device(engine_date):
-        t=datetime.datetime(2021, 7, 7, 1, 2, 1)
+    def get_last_connection_to_device(self, engine_date):
+        t=datetime.datetime(engine_date)
         return calendar.timegm(t.timetuple())
 
     def check_uplink(self, uplink_aggregate):
