@@ -483,7 +483,7 @@ class target:
             self.add_to_log("Getting datetime: " + str(epoch_time))
             return epoch_time
         except ValueError:
-            self.add_to_log("Invalid date string format. Please provide a valid ISO 8601 formatted string.")
+            self.add_to_log("Invalid date string format. Please provide a valid ISO 8601 formatted string. Provided datetime string: " + engine_date)
             return None
 
     def check_uplink(self, uplink_aggregate):
