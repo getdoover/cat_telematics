@@ -480,6 +480,7 @@ class target:
 
             # Convert datetime object to Unix timestamp (epoch time)
             epoch_time = int(dt_object.timestamp())
+            self.add_to_log("Getting datetime: ", str(epoch_time))
             return epoch_time
         except ValueError:
             print("Invalid date string format. Please provide a valid ISO 8601 formatted string.")
