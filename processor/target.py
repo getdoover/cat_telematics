@@ -310,7 +310,8 @@ class target:
                         "name":"node_connection_info",
                         "connectionType":"periodic",
                         "connectionPeriod":1800,
-                        "nextConnection":1800
+                        "nextConnection":1800,
+                        "allowedMisses": 48,   
                     }
                 }
             }
@@ -423,10 +424,20 @@ class target:
             days_till_service_due_disp = int(days_till_service_due)
 
         prev_days_till_service = days_till_service_due
+
+        status_icon = "idle"
+        if engine_on is not None:
+            if not engine_on:
+                status_icon = "off"
+                display_string = "Off"
+            else:
+                status_icon = None
+                display_string = "Running"
             
         self.ui_state_channel.publish(
             msg_str=json.dumps({
                 "state" : {
+                    "statusIcon" : status_icon,
                     "children" : {
                         "engineOn" : {
                             "currentValue" : engine_on
