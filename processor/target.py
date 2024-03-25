@@ -796,6 +796,7 @@ class target:
             )
             self.add_to_log("cat api interface created")
 
+            msg = None
             try:
                 msg = self.cat_api_iface.get_equipment_overview(self.machine_make, self.machine_model, self.machine_serial_number)
                 self.add_to_log("cat api response recieved")           
