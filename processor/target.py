@@ -138,11 +138,11 @@ class target:
                 "type":"uiContianer",
                 "displayString":"",
                 "children":{
-                    "significantEvent":{
-                        "type":"uiAlertStream",
-                        "name":"significantEvent",
-                        "displayString":"Notify me of any problems"
-                    },
+                    # "significantEvent":{
+                    #     "type":"uiAlertStream",
+                    #     "name":"significantEvent",
+                    #     "displayString":"Notify me of any problems"
+                    # },
                     "engineOn":{
                         "type":"uiVariable",
                         "varType":"bool",
@@ -309,8 +309,8 @@ class target:
                         "type":"uiConnectionInfo",
                         "name":"node_connection_info",
                         "connectionType":"periodic",
-                        "connectionPeriod":600,
-                        "nextConnection":600
+                        "connectionPeriod":1800,
+                        "nextConnection":1800
                     }
                 }
             }
