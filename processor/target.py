@@ -256,14 +256,14 @@ class target:
                                 "type" : "uiVariable",
                                 "varType" : "float",
                                 "name" : "fuelLastDay",
-                                "displayString" : "24hr Fuel Usage (l)",
+                                "displayString" : "24hr Fuel Usage (litres)",
                                 "decPrecision": 0,
                             },
                             "cumulativeFuel" : {
                                 "type" : "uiVariable",
                                 "varType" : "float",
                                 "name" : "cumulativeFuel",
-                                "displayString" : "Total Fuel Usage (l)",
+                                "displayString" : "Total Fuel Usage (litres)",
                                 "decPrecision": 0,
                             },
                         }
