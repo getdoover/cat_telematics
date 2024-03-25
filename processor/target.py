@@ -216,6 +216,58 @@ class target:
                         "displayString" : "Ave Kms Per Day (kms)",
                         "decPrecision": 1,
                     },
+                    "fuel_submodule":{
+                        "type":"uiSubmodule",
+                        "name":"fuel_submodule",
+                        "displayString":"Fuel",
+                        "children":{
+                            "fuel_level" : {
+                                "type" : "uiVariable",
+                                "varType" : "float",
+                                "name" : "fuel_level",
+                                "displayString" : "Fuel Level (%)",
+                                "decPrecision": 1,
+                                "form": "radialGauge",
+                                "ranges": [
+                                    {
+                                    "label": "Low",
+                                        "min": 0,
+                                        "max": 30,
+                                        "colour": "yellow",
+                                        "showOnGraph": True
+                                    },
+                                    {
+                                        "label": "Mid",
+                                        "min": 30,
+                                        "max": 70,
+                                        "colour": "blue",
+                                        "showOnGraph": True
+                                    },
+                                    {
+                                        "label": "Full",
+                                        "min": 70,
+                                        "max": 100,
+                                        "colour": "green",
+                                        "showOnGraph": True
+                                    }
+                                ],
+                            },
+                            "fuelLastDay" : {
+                                "type" : "uiVariable",
+                                "varType" : "float",
+                                "name" : "fuelLastDay",
+                                "displayString" : "24hr Fuel Usage (l)",
+                                "decPrecision": 0,
+                            },
+                            "cumulativeFuel" : {
+                                "type" : "uiVariable",
+                                "varType" : "float",
+                                "name" : "cumulativeFuel",
+                                "displayString" : "Total Fuel Usage (l)",
+                                "decPrecision": 0,
+                            },
+                        }
+                    },
                     "maintenance_submodule":{
                         "type":"uiSubmodule",
                         "name":"maintenance_submodule",
@@ -389,6 +441,27 @@ class target:
         except Exception as e:
             self.add_to_log("ERROR could not retrieve odometer from uplink aggregate " + str(e))
 
+        daily_fuel_consumed = None
+        try:
+            daily_fuel_consumed = uplink_aggregate["FuelUsedLast24"]["FuelConsumed"]
+            self.add_to_log("daily fuel consumed is: " + str(daily_fuel_consumed))
+        except Exception as e:
+            self.add_to_log("ERROR could not retrieve daily fuel consumed from uplink aggregate " + str(e))
+
+        total_fuel_consumed = None
+        try:
+            total_fuel_consumed = uplink_aggregate["FuelUsed"]["FuelConsumed"]
+            self.add_to_log("total fuel consumed is: " + str(total_fuel_consumed))
+        except Exception as e:
+            self.add_to_log("ERROR could not retrieve total fuel consumed from uplink aggregate " + str(e))
+
+        fuel_level = None
+        try:
+            fuel_level = uplink_aggregate["FuelRemaining"]["Percent"]
+            self.add_to_log("fuel level is: " + str(fuel_level))
+        except Exception as e:
+            self.add_to_log("ERROR could not retrieve fuel level from uplink aggregate " + str(e))
+
         ave_rates = self.get_average_rates(engine_hours, engine_hours, odometer, odometer, self.get_average_use_window_days())
         
         next_service_est_dt = self.get_next_service_estimate(engine_hours, odometer, ave_rates['run_hours'], ave_rates['odometer'])
@@ -468,6 +541,19 @@ class target:
                         },
                         "aveKmsPerDay" : {
                             "currentValue": ave_rates['odometer'],
+                        },
+                        "fuel_submodule" : {
+                            "children" : {
+                                "fuel_level" : {
+                                    "currentValue" : fuel_level
+                                },
+                                "fuelLastDay" : {
+                                    "currentValue" : daily_fuel_consumed
+                                },
+                                "cumulativeFuel" : {
+                                    "currentValue" : total_fuel_consumed
+                                }
+                            }
                         },
                         "node_connection_info" : {
                             "lastConnection": self.get_last_connection_to_device(uplink_aggregate["CumulativeOperatingHours"]["Datetime"])
